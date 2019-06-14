@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import Contact from "./Contact";
 
 class Contacts extends Component {
@@ -25,15 +25,26 @@ class Contacts extends Component {
     ]
   };
 
+  handleDeleteContact = id => {
+    const { contacts } = this.state;
+    const newContacts = contacts.filter(contact => contact.id !== id);
+    this.setState({
+      contacts: newContacts
+    });
+  };
   render() {
     const { contacts } = this.state;
 
     return (
-      <div>
+      <Fragment>
         {contacts.map(contact => (
-          <Contact key={contact.id} contact={contact} />
+          <Contact
+            key={contact.id}
+            contact={contact}
+            handleDeleteContact={this.handleDeleteContact}
+          />
         ))}
-      </div>
+      </Fragment>
     );
   }
 }
