@@ -1,0 +1,128 @@
+import React, { Component } from "react";
+import { Consumer } from "../../context";
+import TextInputGroup from "../layout/TextInputGroup";
+import uuid from "uuid";
+
+class AddContact extends Component {
+  state = {
+    name: "",
+    email: "",
+    phone: "",
+    errors: {}
+  };
+
+  handleOnChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
+  handleOnSubmit = dispatch => {
+    const { name, email, phone } = this.state;
+
+    //Check for Error
+    if (name === "") {
+      this.setState({
+        errors: {
+          name: "Name is required"
+        }
+      });
+      return;
+    }
+    if (email === "") {
+      this.setState({
+        errors: {
+          email: "Email is required"
+        }
+      });
+      return;
+    }
+
+    if (phone === "") {
+      this.setState({
+        errors: {
+          phone: "Phone is required"
+        }
+      });
+      return;
+    }
+
+    const newContact = {
+      id: uuid(),
+      name,
+      email,
+      phone
+    };
+
+    dispatch({
+      type: "ADD_CONTACT",
+      payload: newContact
+    });
+
+    this.setState({
+      name: "",
+      email: "",
+      phone: "",
+      errors: {}
+    });
+  };
+  render() {
+    const { name, email, phone, errors } = this.state;
+    return (
+      <Consumer>
+        {value => {
+          const { dispatch } = value;
+          return (
+            <div className="card mb-3">
+              <div className="card-header">Add Contact</div>
+              <div className="card-body">
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    this.handleOnSubmit(dispatch);
+                  }}
+                >
+                  <TextInputGroup
+                    label="Name"
+                    name="name"
+                    placeholder="Enter Name"
+                    value={name}
+                    onChange={this.handleOnChange}
+                    error={errors.name}
+                  />
+
+                  <TextInputGroup
+                    label="Email"
+                    type="email"
+                    name="email"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChange={this.handleOnChange}
+                    error={errors.email}
+                  />
+
+                  <TextInputGroup
+                    label="Phone"
+                    name="phone"
+                    placeholder="Enter Phone"
+                    value={phone}
+                    onChange={this.handleOnChange}
+                    error={errors.phone}
+                  />
+
+                  <input
+                    type="submit"
+                    value="Add Contact"
+                    className="btn btn-light btn-block"
+                  />
+                </form>
+              </div>
+            </div>
+          );
+        }}
+      </Consumer>
+    );
+  }
+}
+
+export default AddContact;
